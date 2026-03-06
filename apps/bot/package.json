@@ -9,18 +9,17 @@
     "start": "node dist/index.js"
   },
   "dependencies": {
-    "hono": "^4.3.0",
     "@hono/node-server": "^1.11.0",
-    "dotenv": "^16.4.0",
-    "zod": "^3.23.0",
-    "openai": "^4.52.0",
-    "@anthropic-ai/sdk": "^0.24.0",
     "@octokit/rest": "^20.0.2",
-    "@pr-bot/types": "workspace:*"
+    "@pr-bot/types": "workspace:*",
+    "dotenv": "^16.4.0",
+    "hono": "^4.3.0",
+    "openai": "^4.52.0",
+    "zod": "^3.23.0"
   },
   "devDependencies": {
     "@pr-bot/config": "workspace:*",
-    "@types/node": "^20.0.0",
+    "@types/node": "^20.19.37",
     "tsx": "^4.11.0",
     "typescript": "latest"
   }

@@ -11,6 +11,7 @@
   },
   "devDependencies": {
     "@pr-bot/config": "workspace:*",
+    "@types/node": "latest",
     "typescript": "latest"
   }
 }
