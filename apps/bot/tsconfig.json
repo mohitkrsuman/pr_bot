@@ -3,7 +3,10 @@
   "compilerOptions": {
     "rootDir": "src",
     "outDir": "dist",
-    "types": ["node"]
+    "types": ["node"],
+    "paths": {
+      "@pr-bot/types": ["../../packages/types/dist/index.d.ts"]
+    }
   },
   "include": ["src/**/*"]
 }

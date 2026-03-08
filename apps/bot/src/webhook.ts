@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { validateEnv } from "./env.js";
 import crypto from "node:crypto";
-// import type {  } from "";
+import type { PRPayload } from "@pr-bot/types";
 
 export const webhookRoute = new Hono();
 
@@ -41,7 +41,8 @@ webhookRoute.post("/", async (c) => {
    if(event !== "pull_request"){
       return c.json({  ok: true, skipped: true, event});
    }
-
-   // let payload: 
+   
+   // parsing payload
+   let payload: PRPayload;
        
 });
