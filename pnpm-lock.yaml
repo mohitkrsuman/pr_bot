@@ -26,6 +26,9 @@ importers:
       '@octokit/rest':
         specifier: ^20.0.2
         version: 20.1.2
+      '@pr-bot/github':
+        specifier: workspace:*
+        version: link:../../packages/github
       '@pr-bot/types':
         specifier: workspace:*
         version: link:../../packages/types

@@ -11,6 +11,7 @@
   "dependencies": {
     "@hono/node-server": "^1.11.0",
     "@octokit/rest": "^20.0.2",
+    "@pr-bot/github": "workspace:*",
     "@pr-bot/types": "workspace:*",
     "dotenv": "^16.4.0",
     "hono": "^4.3.0",
