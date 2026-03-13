@@ -3,7 +3,7 @@ import { z } from "zod";
 const EnvSchema = z.object({
   GITHUB_TOKEN: z.string().min(1, "GITHUB_TOKEN is required"),
   GITHUB_WEBHOOK_SECRET: z.string().min(1, "GITHUB_WEBHOOK_SECRET is required"),
-  OPEN_AI_KEY: z.string().min(1, "OPEN_AI is required"),
+  OPENAI_API_KEY: z.string().min(1, "OPEN_AI is required"),
   PORT: z.coerce.number().default(8000),
   NODE_ENV: z.enum(["development", "production"]).default("development"),
 });
