@@ -58,6 +58,7 @@ webhookRoute.post("/", async (c) => {
     return c.json({ ok: true, skipped: true, action: payload.action });
   }
 
+  
   console.log(
     `[webhook] PR #${payload.pull_request.number} ${payload.action} in ${payload.repository.full_name}`,
   );
@@ -88,7 +89,7 @@ async function handlePRAsync(payload: PRPayload): Promise<void> {
     fetchFileTree(octokit, owner, repo, headSha),
   ]);
   
-  
+
   if(changedFiles.length === 0) {
     console.log("[pr] No reviewable files found, skipping.");
   }
