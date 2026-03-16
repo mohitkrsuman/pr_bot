@@ -2,7 +2,11 @@ import { Hono } from "hono";
 import { validateEnv } from "./env.js";
 import crypto from "node:crypto";
 import type { PRPayload } from "@pr-bot/types";
-import  { createOctokit, fetchChangedFiles, fetchFileTree } from "@pr-bot/github";
+import {
+  createOctokit,
+  fetchChangedFiles,
+  fetchFileTree,
+} from "@pr-bot/github";
 
 export const webhookRoute = new Hono();
 
@@ -39,6 +43,11 @@ webhookRoute.post("/", async (c) => {
   const event = c.req.header("x-github-event");
   console.log(`[webhook] Received event: ${event}`);
 
+  if (event === "ping") {
+    console.log("[webhook] Ping received - webhook is configured correctly!");
+    return c.json({ ok: true, message: "pong" });
+  }
+
   if (event !== "pull_request") {
     return c.json({ ok: true, skipped: true, event });
   }
@@ -58,7 +67,6 @@ webhookRoute.post("/", async (c) => {
     return c.json({ ok: true, skipped: true, action: payload.action });
   }
 
-  
   console.log(
     `[webhook] PR #${payload.pull_request.number} ${payload.action} in ${payload.repository.full_name}`,
   );
@@ -88,12 +96,11 @@ async function handlePRAsync(payload: PRPayload): Promise<void> {
     fetchChangedFiles(octokit, owner, repo, prNumber),
     fetchFileTree(octokit, owner, repo, headSha),
   ]);
-  
 
-  if(changedFiles.length === 0) {
+  if (changedFiles.length === 0) {
     console.log("[pr] No reviewable files found, skipping.");
   }
-
+  
   console.log(
     `[pr-handler] starting review for PR #${payload.pull_request.number}`,
   );
