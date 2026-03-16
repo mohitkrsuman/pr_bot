@@ -2,7 +2,7 @@ import { Hono } from "hono";
 import { validateEnv } from "./env.js";
 import crypto from "node:crypto";
 import type { PRPayload } from "@pr-bot/types";
-import  { createOctokit } from "@pr-bot/github";
+import  { createOctokit, fetchChangedFiles, fetchFileTree } from "@pr-bot/github";
 
 export const webhookRoute = new Hono();
 
@@ -82,6 +82,15 @@ async function handlePRAsync(payload: PRPayload): Promise<void> {
   console.log(`[pr] Reviewing PR #${prNumber} in ${owner}/${repo}`);
 
   const octokit = createOctokit(env.GITHUB_TOKEN);
+
+  const [changedFiles, fileTree] = await Promise.all([
+    fetchChangedFiles(octokit, owner, repo, prNumber),
+    fetchFileTree(octokit, owner, repo, headSha),
+  ]);
+
+  if(changedFiles.length === 0) {
+    console.log("[pr] No reviewable files found, skipping.");
+  }
 
   console.log(
     `[pr-handler] starting review for PR #${payload.pull_request.number}`,

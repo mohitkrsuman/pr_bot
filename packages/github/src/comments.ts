@@ -57,7 +57,27 @@ export async function postReviewComments(
 
    for(const issue of issues) {
       try{
+         const emoji = SEVERITY_EMOJI[issue.severity] ?? "💬";
+         
+         const body = [
+            `${emoji} **[${issue.severity.toUpperCase()}] ${issue.type}**`,
+            "",
+            issue.message,
+            "",
+            `**Suggestion:** ${issue.suggestion}`
+         ].join("\n");
 
+         await octokit.pulls.createReviewComment({
+            owner,
+            repo,
+            pull_number: prNumber,
+            commit_id: commitSha,
+            path: issue.file,
+            line: issue.line,
+            body,
+         });
+
+         posted++;
       }catch(err){
          console.warn(
             `[github] Skipped comment on ${issue.file}: ${issue.line} - line not in diff`
