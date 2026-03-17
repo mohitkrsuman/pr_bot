@@ -1,5 +1,5 @@
 export type Severity = "critical" | "warning" | "suggestion";
-export type IssueType = "security" | "bug" | "performance" | "quality" | "unnecessary_fie" | "duplicate_code" | "deprecated_api" | "vulnerability" | "license" | "other";
+export type IssueType = "security" | "bug" | "performance" | "quality" | "unnecessary_file" | "duplicate_code" | "deprecated_api" | "vulnerability" | "license" | "other";
 
 export interface ReviewIssue {
    file: string;
