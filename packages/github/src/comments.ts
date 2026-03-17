@@ -1,7 +1,8 @@
 // will post the summary comment and inline review comments back to the PR.
 
 import type { Octokit } from "@octokit/rest";
-import type { ReviewIssue, ReviewResult } from "../../types/dist/index.js";
+import type { ReviewIssue, ReviewResult } from "@pr-bot/types";
+
 
 const SEVERITY_EMOJI: Record<string, string> = {
   critical: "🔴",

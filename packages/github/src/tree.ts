@@ -1,7 +1,7 @@
 // this code will fetch complete repo file tree. This gives the context to ai about hte overall project structure
 
 import type { Octokit } from "@octokit/rest";
-import type { FileTreeEntry } from "../../types/dist/index.js";
+import type { FileTreeEntry } from "@pr-bot/types";
 
 export async function fetchFileTree(
   octokit: Octokit,

@@ -1,5 +1,5 @@
 import type { Octokit } from "@octokit/rest";
-import type { ChangedFile } from "../../types/dist/index.js";
+import type { ChangedFile } from "@pr-bot/types";
 
 const SKIP_PATTERNS = [
   /package-lock\.json$/,

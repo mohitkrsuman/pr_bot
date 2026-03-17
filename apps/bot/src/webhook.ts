@@ -1,12 +1,14 @@
 import { Hono } from "hono";
 import { validateEnv } from "./env.js";
 import crypto from "node:crypto";
-import type { PRPayload } from "@pr-bot/types";
+import type { PRPayload, ReviewContext } from "@pr-bot/types";
 import {
   createOctokit,
   fetchChangedFiles,
   fetchFileTree,
+  postSummaryComment,
 } from "@pr-bot/github";
+import { runReview } from "./reviewer.js";
 
 export const webhookRoute = new Hono();
 
@@ -100,10 +102,22 @@ async function handlePRAsync(payload: PRPayload): Promise<void> {
   if (changedFiles.length === 0) {
     console.log("[pr] No reviewable files found, skipping.");
   }
-  
+
   console.log(
     `[pr-handler] starting review for PR #${payload.pull_request.number}`,
   );
+
+  const ctx: ReviewContext = {
+     repo: { owner, name: repo, default_branch: payload.repository.default_branch},
+     prNumber,
+     changedFiles,
+     fileTree,
+     existingExports: [],
+     installedPackages: [],
+  }
+
+  const result = await runReview(ctx);
+  await postSummaryComment(octokit, owner,repo, prNumber, result);
 
   console.log(`[pr-handler] Head SHA: ${payload.pull_request.head.sha}`);
 }
