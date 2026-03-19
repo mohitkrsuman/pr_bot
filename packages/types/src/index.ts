@@ -1,5 +1,5 @@
 export type Severity = "critical" | "warning" | "suggestion";
-export type IssueType = "security" | "bug" | "performance" | "quality" | "unnecessary_fie" | "duplicate_code" | "deprecated_api" | "vulnerability" | "license" | "other";
+export type IssueType = "security" | "bug" | "performance" | "quality" | "unnecessary_file" | "duplicate_code" | "deprecated_api" | "vulnerability" | "license" | "other";
 
 export interface ReviewIssue {
    file: string;
@@ -21,6 +21,7 @@ export interface ChangedFile {
    additions: number;
    deletions: number;
    patch?: string;
+   validLines?: number[];
 }
 
 export interface FileTreeEntry{
@@ -51,7 +52,7 @@ export interface PRPayload {
 }
 
 export interface ReviewContext {
-   repo: { onwer: string; name: string; default_branch: string };
+   repo: { owner: string; name: string; default_branch: string };
    prNumber: number;
    changedFiles: ChangedFile[];
    fileTree: FileTreeEntry[];

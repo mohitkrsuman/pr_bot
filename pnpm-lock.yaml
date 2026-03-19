@@ -26,6 +26,9 @@ importers:
       '@octokit/rest':
         specifier: ^20.0.2
         version: 20.1.2
+      '@pr-bot/github':
+        specifier: workspace:*
+        version: link:../../packages/github
       '@pr-bot/types':
         specifier: workspace:*
         version: link:../../packages/types
@@ -56,6 +59,25 @@ importers:
         version: 5.9.3
 
   packages/config: {}
+
+  packages/github:
+    dependencies:
+      '@octokit/rest':
+        specifier: ^20.0.2
+        version: 20.1.2
+      '@pr-bot/types':
+        specifier: workspace:*
+        version: link:../types
+    devDependencies:
+      '@pr-bot/config':
+        specifier: workspace:*
+        version: link:../config
+      '@types/node':
+        specifier: ^25.5.0
+        version: 25.5.0
+      typescript:
+        specifier: latest
+        version: 5.9.3
 
   packages/types:
     devDependencies:
@@ -296,6 +318,9 @@ packages:
 
   '@types/node@25.3.5':
     resolution: {integrity: sha512-oX8xrhvpiyRCQkG1MFchB09f+cXftgIXb3a7UUa4Y3wpmZPw5tyZGTLWhlESOLq1Rq6oDlc8npVU2/9xiCuXMA==}
+
+  '@types/node@25.5.0':
+    resolution: {integrity: sha512-jp2P3tQMSxWugkCUKLRPVUpGaL5MVFwF8RDuSRztfwgN1wmqJeMSbKlnEtQqU8UrhTmzEmZdu2I6v2dpp7XIxw==}
 
   abort-controller@3.0.0:
     resolution: {integrity: sha512-h8lQ8tacZYnR3vNQTgibj+tODHI5/+l06Au2Pcriv/Gmet0eaj4TwWH41sO9wnHDiQsEj19q0drzdWdeAHtweg==}
@@ -705,6 +730,10 @@ snapshots:
       undici-types: 6.21.0
 
   '@types/node@25.3.5':
+    dependencies:
+      undici-types: 7.18.2
+
+  '@types/node@25.5.0':
     dependencies:
       undici-types: 7.18.2
 

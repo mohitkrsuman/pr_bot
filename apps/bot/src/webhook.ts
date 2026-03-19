@@ -1,7 +1,15 @@
 import { Hono } from "hono";
 import { validateEnv } from "./env.js";
 import crypto from "node:crypto";
-import type { PRPayload } from "@pr-bot/types";
+import type { PRPayload, ReviewContext } from "@pr-bot/types";
+import {
+  createOctokit,
+  fetchChangedFiles,
+  fetchFileTree,
+  postReviewComments,
+  postSummaryComment,
+} from "@pr-bot/github";
+import { runReview } from "./reviewer.js";
 
 export const webhookRoute = new Hono();
 
@@ -38,6 +46,11 @@ webhookRoute.post("/", async (c) => {
   const event = c.req.header("x-github-event");
   console.log(`[webhook] Received event: ${event}`);
 
+  if (event === "ping") {
+    console.log("[webhook] Ping received - webhook is configured correctly!");
+    return c.json({ ok: true, message: "pong" });
+  }
+
   if (event !== "pull_request") {
     return c.json({ ok: true, skipped: true, event });
   }
@@ -71,9 +84,46 @@ webhookRoute.post("/", async (c) => {
 });
 
 async function handlePRAsync(payload: PRPayload): Promise<void> {
+  const env = validateEnv();
+
+  const owner = payload.repository.owner.login;
+  const repo = payload.repository.name;
+  const prNumber = payload.pull_request.number;
+  const headSha = payload.pull_request.head.sha;
+
+  console.log(`[pr] Reviewing PR #${prNumber} in ${owner}/${repo}`);
+
+  const octokit = createOctokit(env.GITHUB_TOKEN);
+
+  const [changedFiles, fileTree] = await Promise.all([
+    fetchChangedFiles(octokit, owner, repo, prNumber),
+    fetchFileTree(octokit, owner, repo, headSha),
+  ]);
+
+  if (changedFiles.length === 0) {
+    console.log("[pr] No reviewable files found, skipping.");
+  }
+
   console.log(
     `[pr-handler] starting review for PR #${payload.pull_request.number}`,
   );
+
+  const ctx: ReviewContext = {
+     repo: { owner, name: repo, default_branch: payload.repository.default_branch},
+     prNumber,
+     changedFiles,
+     fileTree,
+     existingExports: [],
+     installedPackages: [],
+  }
+
+  const result = await runReview(ctx);
+  console.log("[debug] issues:", JSON.stringify(result.issues, null, 2));
+  await postSummaryComment(octokit, owner,repo, prNumber, result);
+
+  if (result.issues.length > 0) {
+    await postReviewComments(octokit, owner, repo, prNumber, headSha, result.issues);
+  }
 
   console.log(`[pr-handler] Head SHA: ${payload.pull_request.head.sha}`);
 }

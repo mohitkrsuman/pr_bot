@@ -1,0 +1,21 @@
+{
+  "name": "@pr-bot/github",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "dependencies": {
+    "@octokit/rest": "^20.0.2",
+    "@pr-bot/types": "workspace:*"
+  },
+  "devDependencies": {
+    "@pr-bot/config": "workspace:*",
+    "@types/node": "^25.5.0",
+    "typescript": "latest"
+  }
+}
