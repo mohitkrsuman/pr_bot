@@ -118,6 +118,7 @@ async function handlePRAsync(payload: PRPayload): Promise<void> {
   }
 
   const result = await runReview(ctx);
+  console.log("[debug] issues:", JSON.stringify(result.issues, null, 2));
   await postSummaryComment(octokit, owner,repo, prNumber, result);
 
   if (result.issues.length > 0) {
