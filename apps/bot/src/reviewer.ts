@@ -33,9 +33,7 @@ IMPORTANT:
 - Always use "deprecated_api" (correct spelling)
 `;
 
-/**
- * Build prompt
- */
+
 function buildPrompt(ctx: ReviewContext): string {
   const sections: string[] = [];
 
