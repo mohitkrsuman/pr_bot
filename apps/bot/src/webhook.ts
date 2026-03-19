@@ -6,6 +6,7 @@ import {
   createOctokit,
   fetchChangedFiles,
   fetchFileTree,
+  postReviewComments,
   postSummaryComment,
 } from "@pr-bot/github";
 import { runReview } from "./reviewer.js";
@@ -118,6 +119,10 @@ async function handlePRAsync(payload: PRPayload): Promise<void> {
 
   const result = await runReview(ctx);
   await postSummaryComment(octokit, owner,repo, prNumber, result);
+
+  if (result.issues.length > 0) {
+    await postReviewComments(octokit, owner, repo, prNumber, headSha, result.issues);
+  }
 
   console.log(`[pr-handler] Head SHA: ${payload.pull_request.head.sha}`);
 }
