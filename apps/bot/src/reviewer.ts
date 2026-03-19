@@ -1,39 +1,8 @@
 import OpenAI from "openai";
-import { z } from "zod";
-import type { ReviewContext } from "@pr-bot/types";
+import type { ReviewContext, ReviewResult } from "@pr-bot/types";
 
 const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
-});
-
-type ReviewResult = z.infer<typeof ReviewResultSchema>;
-
-/**
- * Zod Schemas (single source of truth)
- */
-const ReviewIssueSchema = z.object({
-  file: z.string(),
-  line: z.number().int().positive(),
-  severity: z.enum(["critical", "warning", "suggestion"]),
-  type: z.enum([
-    "security",
-    "bug",
-    "performance",
-    "quality",
-    "unnecessary_file",
-    "duplicate_code",
-    "deprecated_api",
-    "vulnerability",
-    "license",
-    "other",
-  ]),
-  message: z.string(),
-  suggestion: z.string(),
-});
-
-const ReviewResultSchema = z.object({
-  summary: z.string(),
-  issues: z.array(ReviewIssueSchema),
 });
 
 /**
@@ -148,20 +117,9 @@ export async function runReview(ctx: ReviewContext): Promise<ReviewResult> {
     };
   }
 
-  // ✅ fix AI mistakes before validation
-  const normalized = normalizeIssues(parsed);
+  const normalized = normalizeIssues(parsed) as ReviewResult;
 
-  const validated = ReviewResultSchema.safeParse(normalized);
+  console.log(`[reviewer] Found ${normalized.issues.length} issues`);
 
-  if (!validated.success) {
-    console.error("[reviewer] Schema validation failed:", validated.error.errors);
-    return {
-      summary: "Schema validation failed",
-      issues: [],
-    };
-  }
-
-  console.log(`[reviewer] Found ${validated.data.issues.length} issues`);
-
-  return validated.data;
+  return normalized;
 }

@@ -51,7 +51,7 @@ export interface PRPayload {
 }
 
 export interface ReviewContext {
-   repo: { onwer: string; name: string; default_branch: string };
+   repo: { owner: string; name: string; default_branch: string };
    prNumber: number;
    changedFiles: ChangedFile[];
    fileTree: FileTreeEntry[];
