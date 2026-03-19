@@ -1,5 +1,6 @@
 import OpenAI from "openai";
 import type { ReviewContext, ReviewResult } from "@pr-bot/types";
+import { getValidDiffLines } from "./utils.js";
 
 const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -33,7 +34,6 @@ IMPORTANT:
 - Always use "deprecated_api" (correct spelling)
 `;
 
-
 function buildPrompt(ctx: ReviewContext): string {
   const sections: string[] = [];
 
@@ -42,21 +42,27 @@ Repository: ${ctx.repo.owner}/${ctx.repo.name}
 PR #${ctx.prNumber}
 
 ### File Tree
-${ctx.fileTree.slice(0, 150).map(f => f.path).join("\n")}
+${ctx.fileTree
+  .slice(0, 150)
+  .map((f) => f.path)
+  .join("\n")}
 `);
 
-  sections.push(`### Changed Files
-${ctx.changedFiles.map(f => `
-### ${f.filename} (${f.status}, +${f.additions}/-${f.deletions})
+  sections.push(`## Changed Files
+${ctx.changedFiles
+  .map((f) => {
+    const validLines = f.patch ? getValidDiffLines(f.patch) : [];
+    return `### ${f.filename} (${f.status}, +${f.additions}/-${f.deletions})
+Valid lines for comments: ${validLines.join(", ")}
 \`\`\`diff
 ${f.patch ?? "(no patch)"}
-\`\`\`
-`).join("\n")}
-`);
+\`\`\``;
+  })
+  .join("\n\n")}`);
 
   if (ctx.existingExports.length > 0) {
     sections.push(`### Existing Exports
-${ctx.existingExports.map(e => `- ${e.file}: ${e.exports.join(", ")}`).join("\n")}
+${ctx.existingExports.map((e) => `- ${e.file}: ${e.exports.join(", ")}`).join("\n")}
 `);
   }
 

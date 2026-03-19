@@ -21,6 +21,7 @@ export interface ChangedFile {
    additions: number;
    deletions: number;
    patch?: string;
+   validLines?: number[];
 }
 
 export interface FileTreeEntry{
